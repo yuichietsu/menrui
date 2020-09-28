@@ -3,13 +3,15 @@ namespace menrui;
 
 class Bootstrap
 {
-    public $inputs   = [];
-    public $converts = [];
-    public $outputs  = [];
+    public $flow = null;
 
     public function run()
     {
-        $fork = new Fork();
-        $fork->exec($this->inputs);
+        if ($this->flow instanceof Job) {
+            $fork = new Fork();
+            while (!$this->flow->done) {
+                $fork->exec($this->flow->nextJobs());
+            }
+        }
     }
 }
