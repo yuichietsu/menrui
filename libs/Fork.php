@@ -3,6 +3,17 @@ namespace menrui;
 
 class Fork
 {
+    public $cmd;
+    public $selectTimeout = 0.5;
+
+    public function __construct($cmd = null)
+    {
+        if ($cmd === null) {
+            $cmd = sprintf('php %s/../bin/fork.php', __DIR__);
+        }
+        $this->cmd = $cmd;
+    }
+
     public function exec($jobs)
     {
         $n = count($jobs);
@@ -20,39 +31,44 @@ class Fork
 
     protected function fakeFork($jobs)
     {
-        $descriptors = [
-            0 => ['pipe', 'r'],
-            1 => ['pipe', 'w'],
-        ];
-        $pipes = [];
-        $procs = [];
+        $tvs = (int)$this->selectTimeout;
+        $tvu = ($this->selectTimeout * 1000 * 1000) % (1000 * 1000);
+
         foreach ($jobs as $job) {
-            $pipe = [];
-            $proc = proc_open('php subprocess.php proc', $descriptors, $pipe);
-            stream_set_blocking($pipe[1], 0);
-            $procs[$job->id] = $proc;
-            $pipes[$job->id] = $pipe;
+            $job->open($this->cmd);
+            $job->init();
         }
 
-        $running = true;
-        while ($running) {
+        do {
             $running = false;
             foreach ($jobs as $job) {
-                $stat = proc_get_status($procs[$job->id]);
-                if ($stat['running']) {
+                if (!$job->done) {
                     $running = true;
-                    usleep(10 * 1000);
-                    $str = fread($pipes[$job->id][1], 1024);
-                    if ($str) {
-                        printf($str);
+                    $stat = proc_get_status($job->proc);
+                    if ($stat === false) {
+                        $job->error('failed to get stat info ob proc');
+                    } elseif ($stat['running'] === false) {
+                        $job->exit($stat['exitcode']);
+                    } else {
+                        foreach ([1, 2] as $desc) {
+                            $read   = [$job->pipes[$desc]];
+                            $write  = null;
+                            $except = null;
+                            $n = stream_select($read, $write, $except, $tvs, $tvu);
+                            if ($n > 0) {
+                                do {
+                                    $data = fread($job->pipes[$desc], 8092);
+                                    $job->raw .= $data;
+                                } while (strlen($data) > 0);
+                            }
+                        }
                     }
                 }
             }
-        }
+        } while ($running);
 
         foreach ($jobs as $job) {
-            fclose($pipes[$job->id][1]);
-            proc_close($procs[$job->id]);
+            $job->close();
         }
     }
 

@@ -3,16 +3,17 @@ namespace menrui;
 
 class Job
 {
-    private static $idSeq = 1;
-
-    public $id = 0;
     public $done = false;
+    public $errorMessage = null;
+    public $exitCode = 0;
     public $upstreams = [];
     public $result = null;
+    public $proc;
+    public $pipes;
+    public $raw = '';
 
     public function __construct($upstreams = [])
     {
-        $this->id = self::$idSeq++;
         $this->upstreams = $upstreams;
     }
 
@@ -34,6 +35,51 @@ class Job
 
     public function run()
     {
+    }
+
+    public function error($msg)
+    {
+        if ($code === 0) {
+            $this->result = unserialize($this->raw);
+        }
+        $this->errorMessage = $msg;
         $this->done = true;
+    }
+
+    public function exit($code)
+    {
+        if ($code === 0) {
+            $this->result = unserialize($this->raw);
+        }
+        $this->exitCode = $code;
+        $this->done = true;
+    }
+
+    public function open($cmd)
+    {
+        $pipes = [];
+        $descriptors = [
+            0 => ['pipe', 'r'],
+            1 => ['pipe', 'w'],
+            2 => ['pipe', 'w'],
+        ];
+        $proc = proc_open($cmd, $descriptors, $pipes);
+        stream_set_blocking($pipes[1], 0);
+        stream_set_blocking($pipes[2], 0);
+        $this->proc = $proc;
+        $this->pipes = $pipes;
+    }
+
+    public function init()
+    {
+        fwrite($this->pipes[0], serialize($this));
+        fclose($this->pipes[0]);
+    }
+
+    public function close()
+    {
+        fclose($this->pipes[1]);
+        fclose($this->pipes[2]);
+        proc_close($this->proc);
     }
 }
