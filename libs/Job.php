@@ -37,6 +37,26 @@ class Job
     {
     }
 
+    protected function extractParameters()
+    {
+        $data = [];
+        $params = null;
+        foreach ($this->upstreams as $stream) {
+            if ($stream instanceof Job\Parameter) {
+                $params = $stream->result;
+            } else {
+                if (is_array($stream->result)) {
+                    foreach ($stream->result as $r) {
+                        $data[] = $r;
+                    }
+                } else {
+                    $data[] = $stream->result;
+                }
+            }
+        }
+        return [$params, $data];
+    }
+
     public function error($msg)
     {
         if ($code === 0) {
