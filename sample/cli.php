@@ -1,7 +1,7 @@
 <?php
 namespace menrui;
 
-require_once '../autoload.php';
+require_once __DIR__ . '/../autoload.php';
 
 $b = new Bootstrap();
 $b->flow = new Job\PrintR([
