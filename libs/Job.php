@@ -11,6 +11,7 @@ class Job
     public $proc;
     public $pipes;
     public $raw = '';
+    public $err = '';
 
     public function __construct($upstreams = [])
     {
@@ -59,9 +60,6 @@ class Job
 
     public function error($msg)
     {
-        if ($code === 0) {
-            $this->result = unserialize($this->raw);
-        }
         $this->errorMessage = $msg;
         $this->done = true;
     }
@@ -92,7 +90,7 @@ class Job
 
     public function init()
     {
-        fwrite($this->pipes[0], serialize($this));
+        fwrite($this->pipes[0], \Opis\Closure\serialize($this));
         fclose($this->pipes[0]);
     }
 

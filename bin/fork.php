@@ -11,7 +11,7 @@ function main()
     while ('' !== ($data = fread(STDIN, 8092))) {
         $in .= $data;
     }
-    $job = unserialize($in);
+    $job = \Opis\Closure\Unserialize($in);
     $job->run();
     echo serialize($job->result);
     return 0;

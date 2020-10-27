@@ -44,24 +44,26 @@ class Fork
             foreach ($jobs as $job) {
                 if (!$job->done) {
                     $running = true;
-                    $stat = proc_get_status($job->proc);
+                    $stat   = proc_get_status($job->proc);
+                    $read   = [$job->pipes[1], $job->pipes[2]];
+                    $write  = null;
+                    $except = null;
+                    $n = stream_select($read, $write, $except, $tvs, $tvu);
+                    if ($n > 0) {
+                        foreach ([
+                            1 => 'raw',
+                            2 => 'err',
+                        ] as $desc => $var) {
+                            do {
+                                $data = fread($job->pipes[$desc], 8092);
+                                $job->$var .= $data;
+                            } while (strlen($data) > 0);
+                        }
+                    }
                     if ($stat === false) {
                         $job->error('failed to get stat info ob proc');
                     } elseif ($stat['running'] === false) {
                         $job->exit($stat['exitcode']);
-                    } else {
-                        foreach ([1, 2] as $desc) {
-                            $read   = [$job->pipes[$desc]];
-                            $write  = null;
-                            $except = null;
-                            $n = stream_select($read, $write, $except, $tvs, $tvu);
-                            if ($n > 0) {
-                                do {
-                                    $data = fread($job->pipes[$desc], 8092);
-                                    $job->raw .= $data;
-                                } while (strlen($data) > 0);
-                            }
-                        }
                     }
                 }
             }
