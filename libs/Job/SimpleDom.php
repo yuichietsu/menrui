@@ -59,6 +59,8 @@ class SimpleDom extends \menrui\Job
         if ($node) {
             if (is_callable($target)) {
                 $ret = call_user_func($target, $node);
+            } elseif (is_string($target)) {
+                $ret = $node->getAttribute($target);
             } else {
                 $ret = $node->nodeValue;
             }
