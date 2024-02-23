@@ -9,7 +9,5 @@
             "Menrui\\": "src/"
         }
     },
-    "require": {
-            "opis/closure": "*"
-    }
+    "require": {}
 }
