@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class PrintR extends \menrui\Job
+class PrintR extends \Menrui\Job
 {
     public function run()
     {

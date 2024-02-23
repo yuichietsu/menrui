@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class SimpleDom extends \menrui\Job
+class SimpleDom extends \Menrui\Job
 {
     public function run()
     {

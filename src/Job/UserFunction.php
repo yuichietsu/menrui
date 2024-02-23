@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class UserFunction extends \menrui\Job
+class UserFunction extends \Menrui\Job
 {
     public function run()
     {

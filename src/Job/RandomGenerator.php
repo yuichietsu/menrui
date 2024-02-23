@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class RandomGenerator extends \menrui\Job
+class RandomGenerator extends \Menrui\Job
 {
     public function run()
     {

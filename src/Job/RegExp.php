@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class RegExp extends \menrui\Job
+class RegExp extends \Menrui\Job
 {
     public function run()
     {

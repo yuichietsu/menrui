@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class Http extends \menrui\Job
+class Http extends \Menrui\Job
 {
     protected $flatten = false;
     
@@ -13,7 +13,7 @@ class Http extends \menrui\Job
             if ($url = $stream->result['url']) {
                 $this->result[] = file_get_contents($url);
             }
-            if ($stream->result['flatten']) {
+            if ($stream->result['flatten'] ?? false) {
                 $this->flatten = true;
             }
         }

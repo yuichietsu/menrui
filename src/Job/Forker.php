@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class Forker extends \menrui\Job
+class Forker extends \Menrui\Job
 {
     protected $concurrency = 3;
 
@@ -22,7 +22,7 @@ class Forker extends \menrui\Job
             }
         }
         $jobSegs = array_chunk($jobs, $this->concurrency);
-        $fork = new \menrui\Fork();
+        $fork = new \Menrui\Fork();
         foreach ($jobSegs as $jobSeg) {
             $fork->exec($jobSeg);
         }

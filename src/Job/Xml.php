@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class Xml extends \menrui\Job
+class Xml extends \Menrui\Job
 {
     public function run()
     {

@@ -1,5 +1,5 @@
 <?php
-namespace menrui;
+namespace Menrui;
 
 class Fork
 {

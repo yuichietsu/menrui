@@ -1,8 +1,8 @@
 <?php
 
-namespace menrui\Job;
+namespace Menrui\Job;
 
-class Parameter extends \menrui\Job
+class Parameter extends \Menrui\Job
 {
     public $done = true;
 
