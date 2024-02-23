@@ -9,11 +9,11 @@ class Http extends \Menrui\Job
     public function run()
     {
         $this->result = [];
-        foreach ($this->upstreams as $stream) {
-            if ($url = $stream->result['url']) {
+        foreach ($this->jobs as $job) {
+            if ($url = $job->result['url']) {
                 $this->result[] = file_get_contents($url);
             }
-            if ($stream->result['flatten'] ?? false) {
+            if ($job->result['flatten'] ?? false) {
                 $this->flatten = true;
             }
         }

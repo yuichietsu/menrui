@@ -10,7 +10,7 @@ class Forker extends \Menrui\Job
     {
         $this->result = [];
         $jobs = [];
-        foreach ($this->upstreams as $stream) {
+        foreach ($this->jobs as $stream) {
             if ($stream instanceof Parameter) {
                 if ($c = $stream->result['concurrency']) {
                     $this->concurrency = $c;

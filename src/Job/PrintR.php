@@ -7,7 +7,7 @@ class PrintR extends \Menrui\Job
     public function run()
     {
         $r = [];
-        foreach ($this->upstreams as $stream) {
+        foreach ($this->jobs as $stream) {
             $r[] = $stream->result;
         }
         print_r($r);

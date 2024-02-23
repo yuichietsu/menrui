@@ -7,30 +7,30 @@ class Job
     public $done = false;
     public $errorMessage = null;
     public $exitCode = 0;
-    public $upstreams = [];
+    public $jobs = [];
     public $result = null;
     public $proc;
     public $pipes;
     public $raw = '';
     public $err = '';
 
-    public function __construct($upstreams = [])
+    public function __construct($jobs = [])
     {
-        $this->upstreams = $upstreams;
+        $this->jobs = $jobs;
     }
 
     public function nextJobs(&$jobs = null)
     {
         $jobs === null && ($jobs = []);
         if (!$this->done) {
-            $prepared = true;
-            foreach ($this->upstreams as $stream) {
-                if (!$stream->done) {
-                    $prepared = false;
-                    $stream->nextJobs($jobs);
+            $ready = true;
+            foreach ($this->jobs as $job) {
+                if (!$job->done) {
+                    $ready = false;
+                    $job->nextJobs($jobs);
                 }
             }
-            $prepared && ($jobs[] = $this);
+            $ready && ($jobs[] = $this);
         }
         return $jobs;
     }
@@ -43,16 +43,16 @@ class Job
     {
         $data = [];
         $params = null;
-        foreach ($this->upstreams as $stream) {
-            if ($stream instanceof Job\Parameter) {
-                $params = $stream->result;
+        foreach ($this->jobs as $job) {
+            if ($job instanceof Job\Parameter) {
+                $params = $job->result;
             } else {
-                if (is_array($stream->result)) {
-                    foreach ($stream->result as $r) {
+                if (is_array($job->result)) {
+                    foreach ($job->result as $r) {
                         $data[] = $r;
                     }
                 } else {
-                    $data[] = $stream->result;
+                    $data[] = $job->result;
                 }
             }
         }
