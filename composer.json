@@ -1,5 +1,6 @@
 {
     "name": "menrui/menrui",
+	"version": "0.0.3",
     "description": "menrui base",
     "type": "project",
     "license": "MIT",
